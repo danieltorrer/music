@@ -1,0 +1,105 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title></title>
+	<link rel="stylesheet" href="css/foundation.css" />
+	<link rel="stylesheet" href="style.css">
+	<script src="js/vendor/modernizr.js"></script>
+</head>
+<body>
+	
+	<div class="row">
+		<div class="large-12 columns">
+			<div id="canvas">
+				<img id="sol" src="img/sol.svg">
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="large-6 large-centered columns">
+			<div class="notas">
+				<img id="nota2" data-width="28" class="note non-opacity" src="img/nota2.png" height="32" alt="">
+				<img id="nota4" data-width="48" class="note" src="img/nota4.png" height="32" alt="">
+			</div>
+		</div>
+	</div>
+	
+	
+	<script src="js/vendor/jquery.js"></script>
+	<script src="js/foundation.min.js"></script>
+	<script src="js/raphael-min.js"></script>
+	<script>
+	var lineWidth = 920
+	var separacion = 40
+	var xi = 50
+	var yi = 65
+	var xf = 920
+	var yf = 250
+	var numNotes = 0
+	var paper
+	var notes = new Array()
+
+	var selectedNote = "nota2"
+	var noteSpace = 45
+	var noteWidth = 30
+
+	var tempnote;
+	var isMoved = false 
+
+	$(document).ready(function(){
+		paper = Raphael("canvas", 940, 320)
+
+		var masterBackground = paper.rect(10,10,930, 300).attr({fill: "#fff"})
+		masterBackground.node.id = "masterBackground"
+		
+		//pentagrama
+		for (var i = 0; i < 5; i++) {
+			paper.path("M" +xi+ "," + (yi + i * separacion) + "L" + xf + "," + ( yi + i * separacion )).attr({fill: "#000", stroke: "#000", "stroke-width" : 3})
+		}
+
+		paper.path("M52," +(yi - 3)+ "L"+52+",228").attr({fill: "#000", stroke: "#000", "stroke-width" : 8})
+
+
+		//eventos
+		$("#masterBackground").mousemove(function(e){
+			posx = e.pageX - $(document).scrollLeft() - $('#canvas').offset().left;
+			posy = e.pageY - $(document).scrollTop() - $('#canvas').offset().top;
+			console.log(posx +", " + posy)
+
+			drawNote(posx, posy)
+
+		})
+
+		$(".note").click(function(){
+			$(".note").removeClass("non-opacity")
+			$(this).addClass("non-opacity")
+			selectedNote = $(this).attr("id")
+			noteWidth = $(this).attr("data-width")
+		})
+
+	})
+
+	function drawNote(posx, posy){
+		//♩ ♪ ♫ ♬
+		noteX = 190 + (numNotes * 45)
+
+		if (posy < 270 && posy > 20) {
+			noteY = Math.floor(posy / (separacion/2) ) * (separacion / 2) + 5
+			if (isMoved) 
+				tempnote.remove()
+			isMoved = true
+			tempnote = paper.circle(noteX, noteY, 13).attr({fill: "rgba(0,0,0,0.5)", stroke: "rgba(0,0,0,0.5)", "stroke-width" : 1}).data("i", "uno").click(function () {
+				notes[numNotes] = paper.image("img/" + selectedNote + ".png", noteX - 15, noteY - 80, noteWidth, 97).attr({fill: "rgb(0,0,0)", stroke: "rgb(0,0,0)", "stroke-width" : 1}).data("i", "nota"+numNotes)
+				numNotes++
+			})
+		}
+
+	}
+
+
+	</script>
+</body>
+</html>

@@ -1,10 +1,13 @@
-html,body,row:first-child{
+html,body{
 	height: 100%;
+}
+
+#main{
+	padding-top: 30px;
 }
 
 #canvas{
 	position: relative;
-	margin-top: 60px;
 }
 
 #sol{
@@ -17,6 +20,20 @@ html,body,row:first-child{
 	position: absolute;
 	left: 0px;
 	top: 0px;
+}
+
+.unselectable{
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: -moz-none;
+	-ms-user-select: none;
+}
+
+#borrar{
+	position: absolute;
+	right: 50px;
+	top: 17px;
 }
 
 .note{
@@ -41,10 +58,6 @@ html,body,row:first-child{
 
 .non-opacity{
 	opacity: 1;
-}
-
-.note{
-
 }
 
 .notas{

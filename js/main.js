@@ -27,6 +27,7 @@ $(document).ready(function(){
 	_tempNota.noteWidth = 30
 	_tempNota.nombre = ""
 	_tempNota.imageWidht = 28
+	_tempNota.idN = null 
 	_tempNota.circle  = null
 
 	drawPentragram()
@@ -54,31 +55,32 @@ function drawNote(posx, posy){
 
 		_isMoved = true
 
-		_tempNota.nombre = getNoteName(noteY)
-
+		var nombreTemp = getNoteName(noteY)
 		//console.log( $("#notas").val() )
 
-		$("#notas").val(  _notesText + _tempNota.nombre  + " - ")
+		$("#notas").val(  _notesText + nombreTemp  + "-")
 
 		_tempNota.circle = _paper.circle(noteX, noteY, 13)
 		_tempNota.circle.attr({fill: "rgba(0,0,0,0.5)", stroke: "rgba(0,0,0,0.5)", "stroke-width" : 1})
 		_tempNota.circle.click(function () {
 
-			/*switch(_selectedNote){
-
-				case "nota4" :
-				_spaceWidth = _spaceWidth + 7
-				break;
-
-			}
-			*/
 			var tempImagen
+			var notaAnonima 
+			var nombreTemp = getNoteName(noteY)
+
+
+			_tempNota.nombre = nombreTemp
+			_tempNota.idN = _numNotes
 
 			tempImagen = _paper.image("img/" + _tempNota.selectedNote + ".png", noteX - 14 , noteY - 80, _tempNota.imageWidht, 97)
 			tempImagen.attr({fill: "rgb(0,0,0)", stroke: "rgb(0,0,0)", "stroke-width" : 1})
 			tempImagen.data("i", "nota"+_numNotes)
 
-			_notes[_numNotes] = _tempNota
+
+			notaAnonima = _tempNota
+			_notes[_numNotes] = notaAnonima
+
+			console.log(_notes)
 
 			set.push(tempImagen)
 
@@ -86,6 +88,8 @@ function drawNote(posx, posy){
 
 			_notesText = _notesText + _tempNota.nombre + "-"
 			$("#notas").text( _notesText )
+
+			//_tempNota.remove()
 		})
 	}
 
@@ -118,20 +122,23 @@ function notaClick(){
 }
 
 function borrarNota(){
-	if (_numNotes > 1) {
+	/*if (_numNotes > 1) {
 		//_spaceWidth = _spaceWidth - 7
 		//console.log(_spaceWidth)
-		var texto = $("#notas").val()
-		_notesText = texto.substring(1, texto.length -3 )
-		$("#notas").val( _notesText	)
-	}
+		
+	}*/
 
 	if (_numNotes>0) {
+		console.log(_notes[_numNotes-1])
+		_notesText = _notesText.substring(0, _notesText.length - _notes[_numNotes-1].nombre.length - 1)
+		$("#notas").val( _notesText	)
+
 		_notes.pop()
 		set[_numNotes-1].remove()
 		set.pop()
 		//_notes[_numNotes-1].remove()
 		_numNotes--
+		console.log("numnotes" + _numNotes)
 	}
 	
 }

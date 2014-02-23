@@ -1,98 +1,115 @@
-var _separacion = 40
-var _numNotes = 0
-var _paper
-var _notes = new Array()
-var _notesText = ""
-var _tempNota = new Object();
-var _isMoved = false
+var _separacion = 40 //Separacion entre lineas
+var _numNotes = 0    //Numero de notas
+var _paper			 //Cavas
 
-var set
+var _notesText = ""  //Texto generado
+var _isMoved = false //Bandera
 
-//var _selectedNote = "nota2"
-//var _noteWidth = 30
+var set 			 //Conjunto de notas
 
-//var _spaceWidth = 0
+//Propiedades de nota actual
+var _selectedNote 
+var _noteWidth 
+var _nombre = ""
+var _imageWidht
+var _imageHeight
+var circle = null
 
-//var _noteName
+//Posicion en x de notas
+var noteX = 190
 
 
 $(document).ready(function(){
 	//update tempnote
 
 	_paper = Raphael("canvas", 940, 320)
-
 	set = _paper.set();
-
-	_tempNota.selectedNote = "nota2"
-	_tempNota.noteWidth = 30
-	_tempNota.nombre = ""
-	_tempNota.imageWidht = 28
-	_tempNota.idN = null 
-	_tempNota.circle  = null
-
 	drawPentragram()
 
 	$("#masterBackground").mousemove( mouseBackground )
 	$(".note").click(notaClick)
 	$("#borrar").click(borrarNota)
 
+	$("#nota4").trigger("click")
+
 })
 
 function mouseBackground(event){
 	var posx = event.pageX - $(document).scrollLeft() - $('#canvas').offset().left
 	var posy = event.pageY - $(document).scrollTop() - $('#canvas').offset().top
-	//console.log(posx +", " + posy)
 	drawNote(posx, posy)
 }
 
 function drawNote(posx, posy){
-	noteX = 190 + (_numNotes * 55) + _tempNota.noteWidth
 
-	if (posy < 270 && posy > 20) { //limites
+	if (posy < 270 && posy > 50) { //limites
 		noteY = Math.floor(posy / (_separacion/2) ) * (_separacion / 2) + 5 //offset
 		if (_isMoved)
-			_tempNota.circle.remove()
+			circle.remove()
 
 		_isMoved = true
 
 		var nombreTemp = getNoteName(noteY)
-		//console.log( $("#notas").val() )
 
 		$("#notas").val(  _notesText + nombreTemp  + "-")
 
-		_tempNota.circle = _paper.circle(noteX, noteY, 13)
-		_tempNota.circle.attr({fill: "rgba(0,0,0,0.5)", stroke: "rgba(0,0,0,0.5)", "stroke-width" : 1})
-		_tempNota.circle.click(function () {
+		circle = _paper.circle(noteX, noteY, 14)
+		circle.attr({fill: "rgba(0,0,0,0.5)", stroke: "rgba(0,0,0,0.5)", "stroke-width" : 1})
+		circle.click(function () {
 
-			var tempImagen
-			var notaAnonima 
-			var nombreTemp = getNoteName(noteY)
-
-
-			_tempNota.nombre = nombreTemp
-			_tempNota.idN = _numNotes
-
-			tempImagen = _paper.image("img/" + _tempNota.selectedNote + ".png", noteX - 14 , noteY - 80, _tempNota.imageWidht, 97)
+			var tempImagen = _paper.image("img/" + _selectedNote + ".png", noteX - (_noteWidth/2) , noteY - _imageHeight + 10, _imageWidht, _imageHeight)
 			tempImagen.attr({fill: "rgb(0,0,0)", stroke: "rgb(0,0,0)", "stroke-width" : 1})
+
 			tempImagen.data("i", "nota"+_numNotes)
-
-
-			notaAnonima = _tempNota
-			_notes[_numNotes] = notaAnonima
-
-			console.log(_notes)
+			tempImagen.data("selectedNote", _selectedNote)
+			tempImagen.data("_noteWidth", _noteWidth)
+			tempImagen.data("_imageWidht", _imageWidht)
+			tempImagen.data("_imageHeight", _imageHeight)
+			tempImagen.data("_nombre", nombreTemp+"")
 
 			set.push(tempImagen)
-
 			_numNotes++
 
-			_notesText = _notesText + _tempNota.nombre + "-"
+			noteX = noteX + _noteWidth // + 20
+			_notesText = _notesText + tempImagen.data("_nombre") + "-"
 			$("#notas").text( _notesText )
 
-			//_tempNota.remove()
 		})
 	}
 
+}
+
+function notaClick(){
+	$(".note").removeClass("non-opacity")
+	$(this).addClass("non-opacity")
+
+	_imageHeight = parseInt( $(this).attr("data-imageh") )
+	_selectedNote = $(this).attr("id")
+	_noteWidth = parseInt( $(this).attr("data-width") )
+	_imageWidht = parseInt( $(this).attr("data-imagew") )
+
+	console.log(_selectedNote)
+}
+
+function borrarNota(){
+	
+	if (_numNotes>0) {
+		
+		var nombre = set[_numNotes - 1].data("_nombre")
+		
+		//Quitamos texto y espacio
+		
+		noteX = noteX - set[_numNotes - 1].data("_noteWidth")
+		_notesText = _notesText.substring(0, _notesText.length - ( nombre.length + 1 ) )
+		
+		//Quitamos figura y eliminamos
+		set[_numNotes - 1].remove()
+		set.pop()
+
+		_numNotes--
+		$("#notas").val( _notesText )
+	}
+	
 }
 
 function drawPentragram(){
@@ -113,39 +130,9 @@ function drawPentragram(){
 
 }
 
-function notaClick(){
-	$(".note").removeClass("non-opacity")
-	$(this).addClass("non-opacity")
-
-	_selectedNote = $(this).attr("id")
-	_noteWidth = $(this).attr("data-width")
-}
-
-function borrarNota(){
-	/*if (_numNotes > 1) {
-		//_spaceWidth = _spaceWidth - 7
-		//console.log(_spaceWidth)
-		
-	}*/
-
-	if (_numNotes>0) {
-		console.log(_notes[_numNotes-1])
-		_notesText = _notesText.substring(0, _notesText.length - _notes[_numNotes-1].nombre.length - 1)
-		$("#notas").val( _notesText	)
-
-		_notes.pop()
-		set[_numNotes-1].remove()
-		set.pop()
-		//_notes[_numNotes-1].remove()
-		_numNotes--
-		console.log("numnotes" + _numNotes)
-	}
-	
-}
-
 function getNoteName(y){
 	var numero = Math.floor(y / ( _separacion/2 ) )
-	//console.log(numero)
+
 
 	switch(numero){
 

@@ -1,4 +1,4 @@
-var _separacion = 40 //Separacion entre lineas
+var _separacion = 30 //Separacion entre lineas
 var _numNotes = 0    //Numero de notas
 var _paper			 //Cavas
 
@@ -8,27 +8,30 @@ var _isMoved = false //Bandera
 var set 			 //Conjunto de notas
 
 //Propiedades de nota actual
-var _selectedNote 
-var _noteWidth 
+var _selectedNote
+var _noteWidth
 var _nombre = ""
 var _imageWidht
 var _imageHeight
 var circle = null
+var isSharp = false
 
 //Posicion en x de notas
-var noteX = 190
-
+var noteX = 180
+var ancho
 
 $(document).ready(function(){
 	//update tempnote
-
-	_paper = Raphael("canvas", 940, 320)
+	ancho = $(window).width()
+	_paper = Raphael("canvas", ancho-30, 400)
 	set = _paper.set();
 	drawPentragram()
 
 	$("#masterBackground").mousemove( mouseBackground )
 	$(".note").click(notaClick)
 	$("#borrar").click(borrarNota)
+
+	$("#sharp").click(activateSharp)
 
 	$("#nota4").trigger("click")
 
@@ -42,7 +45,7 @@ function mouseBackground(event){
 
 function drawNote(posx, posy){
 
-	if (posy < 270 && posy > 50) { //limites
+	if (posy < 300 && posy > 40) { //limites
 		noteY = Math.floor(posy / (_separacion/2) ) * (_separacion / 2) + 5 //offset
 		if (_isMoved)
 			circle.remove()
@@ -51,9 +54,14 @@ function drawNote(posx, posy){
 
 		var nombreTemp = getNoteName(noteY)
 
+		if (nombreTemp != "B" && nombreTemp != "E") {
+			nombreTemp = isSharp? nombreTemp+"#" : nombreTemp+""
+		}
+
+
 		$("#notas").val(  _notesText + nombreTemp  + "-")
 
-		circle = _paper.circle(noteX, noteY, 14)
+		circle = _paper.circle(noteX, noteY, 10)
 		circle.attr({fill: "rgba(0,0,0,0.5)", stroke: "rgba(0,0,0,0.5)", "stroke-width" : 1})
 		circle.click(function () {
 
@@ -91,6 +99,12 @@ function notaClick(){
 	console.log(_selectedNote)
 }
 
+function activateSharp(){
+	$("#sharp").toggleClass("non-opacity")
+	isSharp = !isSharp
+	console.log(isSharp)
+}
+
 function borrarNota(){
 	
 	if (_numNotes>0) {
@@ -114,11 +128,11 @@ function borrarNota(){
 
 function drawPentragram(){
 	var xi = 50
-	var yi = 65
+	var yi = 110
 	var xf = 920
-	var yf = 250
+	var yf = 300
 
-	var masterBackground = _paper.rect(10,10,930, 300).attr({fill: "#fff"})
+	var masterBackground = _paper.rect(0,0, ancho - 50 , 350).attr({fill: "#fff"})
 	masterBackground.node.id = "masterBackground"
 
 	//pentagrama
@@ -126,7 +140,9 @@ function drawPentragram(){
 		_paper.path("M" +xi+ "," + (yi + i * _separacion) + "L" + xf + "," + ( yi + i * _separacion )).attr({fill: "#000", stroke: "#000", "stroke-width" : 3})
 	}
 
-	_paper.path("M52," +(yi - 3)+ "L"+52+",228").attr({fill: "#000", stroke: "#000", "stroke-width" : 8})
+	_paper.path("M52," +(yi - 3)+ "L"+52+","+ parseInt( yi + _separacion * 4) ) .attr({fill: "#000", stroke: "#000", "stroke-width" : 8})
+	//_paper.path("M"+50*7+"," +(yi - 3)+ "L"+50*7+",228").attr({fill: "#000", stroke: "#000", "stroke-width" : 5})
+	_paper.path("M"+50*10+"," +(yi - 3)+ "L"+50*10+",228").attr({fill: "#000", stroke: "#000", "stroke-width" : 5})
 
 }
 
@@ -134,49 +150,50 @@ function getNoteName(y){
 	var numero = Math.floor(y / ( _separacion/2 ) )
 
 
+
 	switch(numero){
 
 		case 1:
-		return "La"
+		return "A"
 		break;
 		case 2:
-		return "Sol"
+		return "G"
 		break;
 		case 3:
-		return "Fa"
+		return "F"
 		break;
 		case 4:
-		return "Mi"
+		return "E"
 		break;
 		case 5:
-		return "Re"
+		return "D"
 		break;
 		case 6:
-		return "Do"
+		return "C"
 		break;
 		case 7:
-		return "Si"
+		return "B"
 		break;
 		case 8:
-		return "La"
+		return "A"
 		break;		
 		case 9:
-		return "Sol"
+		return "G"
 		break;
 		case 10:
-		return "Fa"
+		return "F"
 		break;
 		case 11:
-		return "Mi"
+		return "E"
 		break;
 		case 12:
-		return "Re"
+		return "D"
 		break;
 		case 13:
-		return "Do"
+		return "C"
 		break;
 		case 14:
-		return "Si"
+		return "B"
 		break;
 
 	}

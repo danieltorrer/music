@@ -45,7 +45,7 @@ function mouseBackground(event){
 
 function drawNote(posx, posy){
 
-	if (posy < 300 && posy > 40) { //limites
+	if (posy < 270 && posy > 80) { //limites
 		noteY = Math.floor(posy / (_separacion/2) ) * (_separacion / 2) + 5 //offset
 		if (_isMoved)
 			circle.remove()
@@ -142,7 +142,7 @@ function drawPentragram(){
 
 	_paper.path("M52," +(yi - 3)+ "L"+52+","+ parseInt( yi + _separacion * 4) ) .attr({fill: "#000", stroke: "#000", "stroke-width" : 8})
 	//_paper.path("M"+50*7+"," +(yi - 3)+ "L"+50*7+",228").attr({fill: "#000", stroke: "#000", "stroke-width" : 5})
-	_paper.path("M"+50*10+"," +(yi - 3)+ "L"+50*10+",228").attr({fill: "#000", stroke: "#000", "stroke-width" : 5})
+	_paper.path("M"+ (50 + 537) +"," +(yi - 3)+ "L"+(50 + 537)+",228").attr({fill: "#000", stroke: "#000", "stroke-width" : 5})
 
 }
 
@@ -153,47 +153,53 @@ function getNoteName(y){
 
 	switch(numero){
 
-		case 1:
-		return "A"
-		break;
-		case 2:
-		return "G"
-		break;
-		case 3:
-		return "F"
-		break;
-		case 4:
-		return "E"
-		break;
 		case 5:
-		return "D"
+		return "A"
 		break;
 		case 6:
-		return "C"
-		break;
-		case 7:
-		return "B"
-		break;
-		case 8:
-		return "A"
-		break;		
-		case 9:
 		return "G"
 		break;
-		case 10:
+		case 7:
 		return "F"
 		break;
-		case 11:
+		case 8:
 		return "E"
 		break;
-		case 12:
+		case 9:
 		return "D"
 		break;
-		case 13:
+		case 10:
 		return "C"
 		break;
-		case 14:
+		case 11:
 		return "B"
+		break;
+		case 12:
+		return "A"
+		break;		
+		case 13:
+		return "G"
+		break;
+		case 14:
+		return "F"
+		break;
+		case 15:
+		return "E"
+		break;
+		case 16:
+		return "D"
+		break;
+		case 17:
+		return "C"
+		break;
+		case 18:
+		return "B"
+		break;
+		case 19:
+		return "A"
+		break;
+		case 20:
+		return "G"
 		break;
 
 	}

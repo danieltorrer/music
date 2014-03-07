@@ -16,14 +16,21 @@ var _imageHeight
 var circle = null
 var isSharp = false
 
+var cont = 0
+
+var _hover = true
+
+var _notesJava = new Array()
+var _midiNote = 0
+
 //Posicion en x de notas
-var noteX = 180
+var noteX = 210
 var ancho
 
 $(document).ready(function(){
 	//update tempnote
 	ancho = $(window).width()
-	_paper = Raphael("canvas", ancho-30, 400)
+	_paper = Raphael("canvas", ancho-30, 370)
 	set = _paper.set();
 	drawPentragram()
 
@@ -34,6 +41,61 @@ $(document).ready(function(){
 	$("#sharp").click(activateSharp)
 
 	$("#nota4").trigger("click")
+
+	$("#hoverc").click(function(){
+		_hover = !_hover
+	})
+
+	$("#enviar").click(enviarNotas)
+
+	document.addEventListener('keydown', function(event) {8
+		if(event.keyCode == 8 || event.keyCode == 83 || event.keyCode == 72 || event.keyCode == 49 || event.keyCode == 50 || event.keyCode == 51 || event.keyCode == 52){
+			event.preventDefault()
+		}
+	})
+
+	document.addEventListener('keyup', function(event) {
+
+		switch(event.keyCode){
+			case 83:
+			$("#sharp").trigger("click")
+			break;
+
+			case 72:
+			$("#hoverc").trigger("click")
+			break;
+
+			case 8:
+			$("#borrar").trigger("click")
+			break;
+
+			case 49 :
+			$("#nota1").trigger("click")
+			break;
+
+			case 50 :
+			$("#nota2").trigger("click")
+			break;
+
+			case 51 :
+			$("#nota4").trigger("click")
+			break;
+
+			case 52 :
+			$("#nota8").trigger("click")
+			break;
+
+
+		}
+
+	});
+
+
+
+	MIDI.loadPlugin({
+		soundfontUrl: "./soundfont/",
+		instrument: "acoustic_grand_piano"
+	})
 
 })
 
@@ -59,11 +121,32 @@ function drawNote(posx, posy){
 		}
 
 
+		if (_hover) {
+			var delay = 0; // play one note every quarter second
+			var note = _midiNote; // the MIDI note
+			var velocity = 127; // how hard the note hits
+			
+			// play the note
+			MIDI.setVolume(0, 127);
+			MIDI.noteOn(0, note, velocity, delay);
+			MIDI.noteOff(0, note, delay + 0.75);
+		}
+		
 		$("#notas").val(  _notesText + nombreTemp  + "-")
 
 		circle = _paper.circle(noteX, noteY, 10)
 		circle.attr({fill: "rgba(0,0,0,0.5)", stroke: "rgba(0,0,0,0.5)", "stroke-width" : 1})
 		circle.click(function () {
+
+			var delay = 0; // play one note every quarter second
+			var note = _midiNote; // the MIDI note
+			var velocity = 127; // how hard the note hits
+			
+			// play the note
+			MIDI.setVolume(0, 127);
+			MIDI.noteOn(0, note, velocity, delay);
+			MIDI.noteOff(0, note, delay + 0.75);
+
 
 			var tempImagen = _paper.image("img/" + _selectedNote + ".png", noteX - (_noteWidth/2) , noteY - _imageHeight + 10, _imageWidht, _imageHeight)
 			tempImagen.attr({fill: "rgb(0,0,0)", stroke: "rgb(0,0,0)", "stroke-width" : 1})
@@ -82,8 +165,12 @@ function drawNote(posx, posy){
 			_notesText = _notesText + tempImagen.data("_nombre") + "-"
 			$("#notas").text( _notesText )
 
+			_notesJava[cont] = _midiNote
+
+			cont++
+
 		})
-	}
+}
 
 }
 
@@ -106,11 +193,11 @@ function activateSharp(){
 }
 
 function borrarNota(){
-	
+
 	if (_numNotes>0) {
-		
+
 		var nombre = set[_numNotes - 1].data("_nombre")
-		
+
 		//Quitamos texto y espacio
 		
 		noteX = noteX - set[_numNotes - 1].data("_noteWidth")
@@ -129,7 +216,7 @@ function borrarNota(){
 function drawPentragram(){
 	var xi = 50
 	var yi = 110
-	var xf = 920
+	var xf = 1220
 	var yf = 300
 
 	var masterBackground = _paper.rect(0,0, ancho - 50 , 350).attr({fill: "#fff"})
@@ -149,58 +236,101 @@ function drawPentragram(){
 function getNoteName(y){
 	var numero = Math.floor(y / ( _separacion/2 ) )
 
-
-
 	switch(numero){
-
+		
 		case 5:
+		_midiNote = isSharp? 82 : 81
 		return "A"
 		break;
+		
 		case 6:
+		_midiNote = isSharp? 80 : 79
 		return "G"
 		break;
+		
 		case 7:
+		_midiNote = isSharp? 78 : 77
 		return "F"
 		break;
+		
 		case 8:
+		_midiNote = 76
 		return "E"
 		break;
+		
 		case 9:
+		_midiNote = isSharp? 75 : 74
 		return "D"
 		break;
+		
 		case 10:
+		_midiNote = isSharp? 73 : 72
 		return "C"
 		break;
+		
 		case 11:
+		_midiNote = 71
 		return "B"
 		break;
+		
 		case 12:
+		_midiNote = isSharp? 70 : 69
 		return "A"
 		break;		
+		
 		case 13:
+		_midiNote = isSharp? 68 : 67
 		return "G"
 		break;
+		
 		case 14:
+		_midiNote = isSharp? 66 : 65
 		return "F"
 		break;
+		
 		case 15:
+		_midiNote = 64
 		return "E"
 		break;
+		
 		case 16:
+		_midiNote = isSharp? 63 : 62
 		return "D"
 		break;
+		
 		case 17:
+		_midiNote = isSharp? 61 : 60
 		return "C"
 		break;
+		
 		case 18:
+		_midiNote = 59
 		return "B"
 		break;
+		
 		case 19:
+		_midiNote = isSharp? 58 : 57
 		return "A"
 		break;
+		
 		case 20:
+		_midiNote = isSharp? 56 : 55
 		return "G"
 		break;
 
 	}
+}
+
+function enviarNotas(){
+
+	$.ajax({
+		type: "POST",
+		url: "class/evaluar.php",
+		data : {
+			"notas": _notesText
+		},
+		dataType: "json",
+		success: showMusic,
+		error: showerror
+	});
 }

@@ -85,7 +85,6 @@ $(document).ready(function(){
 			$("#nota8").trigger("click")
 			break;
 
-
 		}
 
 	});
@@ -132,7 +131,7 @@ function drawNote(posx, posy){
 			MIDI.noteOff(0, note, delay + 0.75);
 		}
 		
-		$("#notas").val(  _notesText + nombreTemp  + "-")
+		$("#notas").val(  _notesText + nombreTemp  + " ")
 
 		circle = _paper.circle(noteX, noteY, 10)
 		circle.attr({fill: "rgba(0,0,0,0.5)", stroke: "rgba(0,0,0,0.5)", "stroke-width" : 1})
@@ -162,7 +161,8 @@ function drawNote(posx, posy){
 			_numNotes++
 
 			noteX = noteX + _noteWidth // + 20
-			_notesText = _notesText + tempImagen.data("_nombre") + "-"
+			_notesText = _notesText + tempImagen.data("_nombre") + " "
+			console.log(_notesText)
 			$("#notas").text( _notesText )
 
 			_notesJava[cont] = _midiNote
@@ -189,7 +189,6 @@ function notaClick(){
 function activateSharp(){
 	$("#sharp").toggleClass("non-opacity")
 	isSharp = !isSharp
-	console.log(isSharp)
 }
 
 function borrarNota(){
@@ -325,7 +324,7 @@ function enviarNotas(){
 
 	$.ajax({
 		type: "POST",
-		url: "class/evaluar.php",
+		url: "class/main.php",
 		data : {
 			"notas": _notesText
 		},
@@ -333,4 +332,13 @@ function enviarNotas(){
 		success: showMusic,
 		error: showerror
 	});
+}
+
+function showMusic(answer){
+	console.log( typeof answer )
+	console.log(answer)
+}
+
+function showerror(e,error){
+	console.log(e + " yel " + error)
 }

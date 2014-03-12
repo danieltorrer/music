@@ -103,7 +103,7 @@ footer, #main:after {
 
 .non-opacity{
 	border-radius: 4px;
-	border: 1px solid white;
+	border: 1px solid white !important;
 	opacity: 1 !important;
 }
 
